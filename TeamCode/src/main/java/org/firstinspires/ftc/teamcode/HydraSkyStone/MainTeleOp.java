@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.HydraSkyStone;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.HydraSkyStone.MainOpMode;
+import org.firstinspires.ftc.teamcode.MainOpMode;
 
 @TeleOp(name = "MainTeleOp", group = "opMode")
 public class MainTeleOp extends MainOpMode {
@@ -67,13 +67,13 @@ public class MainTeleOp extends MainOpMode {
 
         // lowers capstone dropper
         if (gamepad2.right_bumper) {
-            //capStoneDown();
-            armRotation();
+            capStoneDown();
+            //armRotation();
         }
         // lifts capstone dropper
         if (gamepad2.left_bumper) {
-           // capStoneUp();
-            armRelease();
+            capStoneUp();;
+            //armRelease();
         }
         // rotates arm/block
         if (gamepad2.dpad_up) {

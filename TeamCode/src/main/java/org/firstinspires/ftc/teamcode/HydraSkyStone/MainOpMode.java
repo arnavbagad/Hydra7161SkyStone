@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.HydraSkyStone;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -26,9 +26,7 @@ public class MainOpMode extends OpMode {
     public double height;
     public Servo grabber;
     public Servo rotate;
-    //public Servo CSS;
-
-    public double twobythree = 2/3;
+    public Servo capStone;
 
     @Override
     public void init() {
@@ -48,13 +46,13 @@ public class MainOpMode extends OpMode {
         rightFoundation = hardwareMap.servo.get("rightFoundation");
         grabber = hardwareMap.servo.get("grabber");
         rotate = hardwareMap.servo.get("rotate");
+        capStone = hardwareMap.servo.get("capStone");
 
-        //CSS = hardwareMap.servo.get("CSS");
         leftFoundation.setPosition(0.3);
         rightFoundation.setPosition(0.6);
         grabber.setPosition(0.85);
-        rotate.setPosition(0.17);
-        //CSS.setPosition(0);
+        rotate.setPosition(0.50);
+        capStone.setPosition(0);
 
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
         FL.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -110,20 +108,12 @@ public class MainOpMode extends OpMode {
         rightFoundation.setPosition(0.6);
     }
 
-    //public void capStoneDown(){
-    //CSS.setPosition(0.4);
-    // }
-
-    //public void capStoneUp(){
-    //CSS.setPosition(0);
-    //}
-
     public void armRotation() {
-        rotate.setPosition(0.5);
+        rotate.setPosition(0.50);
     }
 
     public void armReset() {
-        rotate.setPosition(0.1);
+        rotate.setPosition(0.16);
     }
 
     public void armGrab() {
@@ -143,10 +133,13 @@ public class MainOpMode extends OpMode {
         lift.setPower(0);
     }
 
-    public void armMove(double power) {
-        arm.setPower(power);
+    public void capStoneDown() {
+        capStone.setPosition(0.1);
     }
 
+    public void capStoneUp(){
+        capStone.setPosition(0);
+    }
 //   public void armLift() {
 
 //   }
