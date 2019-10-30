@@ -7,20 +7,19 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class LoadingAuto extends LinearOpMode {
 
     Drivetrain drivetrain;
-    //GripPipelineGOD GripPipelineGOD;
+    SkystoneDetector skystoneDetector;
     private String skyStonePosition;
 
     @Override
     public void runOpMode() throws InterruptedException {
         //GripPipelineGOD = new GripPipelineGOD(this);
         drivetrain = new Drivetrain(this);
+        skystoneDetector = new SkystoneDetector(this);
         while(!isStarted()){
-            skyStonePosition = "0";//GripPipelineGOD.pipeLine();
+            skyStonePosition = skystoneDetector.getSkystonePos();
             telemetry.addData("skyStonePosition: ", skyStonePosition);
             telemetry.update();
         }
-        telemetry.addData("skyStonePosition: ", skyStonePosition);
-        telemetry.update();
 
         waitForStart();
 
