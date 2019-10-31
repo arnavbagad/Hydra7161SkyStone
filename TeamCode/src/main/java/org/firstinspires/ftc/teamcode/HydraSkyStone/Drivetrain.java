@@ -27,6 +27,7 @@ public class Drivetrain{
     LinearOpMode opMode;
 
     public Drivetrain(LinearOpMode opMode)throws InterruptedException {
+        this.opMode = opMode;
         this.opMode.telemetry.addLine("Init: started");
         this.opMode.telemetry.update();
 
@@ -56,10 +57,11 @@ public class Drivetrain{
         intakeRight.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         intakeLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         intakeRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -67,8 +69,8 @@ public class Drivetrain{
 
         this.opMode.telemetry.addLine("Init: FINISHED");
         this.opMode.telemetry.update();
-
     }
+
 
     public void startMotors(double FLP, double FRP, double BLP, double BRP) {
         BL.setPower(BLP);
@@ -107,7 +109,62 @@ public class Drivetrain{
                 //startMotors(changePID + .10, -changePID - .10);
             }
         }
+        stopMotors();
+    }
+
+    public void stopMotors(){
         startMotors(0,0,0,0);
     }
+
+    public void moveEncoder(double power, double inches) throws InterruptedException{
+        resetEncoders();
+        while(getEncoderAvg() < inches * 43.5) {
+            startMotors(power, power, power, power);
+        }
+        stopMotors();
+    }
+
+    public void resetEncoders() throws InterruptedException {
+        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        opMode.idle();
+        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        opMode.idle();
+        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        opMode.idle();
+        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        opMode.idle();
+
+        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        opMode.idle();
+        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        opMode.idle();
+        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        opMode.idle();
+        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        opMode.idle();
+    }
+
+    public int getEncoderAvg() {
+        int count = 4;
+        if ((FR.getCurrentPosition()) == 0){
+            count--;
+        }
+        if ((FL.getCurrentPosition()) == 0){
+            count--;
+        }
+        if ((BR.getCurrentPosition()) == 0){
+            count--;
+        }
+        if ((BL.getCurrentPosition()) == 0){
+            count--;
+        }
+
+        count = count == 0 ? 1 : count;
+
+        return (Math.abs(FR.getCurrentPosition()) +  Math.abs(FL.getCurrentPosition())
+                + Math.abs(BR.getCurrentPosition())
+                + Math.abs(BL.getCurrentPosition())) / count;
+    }
+
 
 }

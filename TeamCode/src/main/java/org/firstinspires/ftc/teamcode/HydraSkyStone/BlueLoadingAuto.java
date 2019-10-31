@@ -2,28 +2,34 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "Loading", group = "LinearOpMode")
-public class LoadingAuto extends LinearOpMode {
+public class BlueLoadingAuto extends LinearOpMode {
 
     Drivetrain drivetrain;
     SkystoneDetector skystoneDetector;
     private String skyStonePosition;
+    ElapsedTime time;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        //GripPipelineGOD = new GripPipelineGOD(this);
         drivetrain = new Drivetrain(this);
         skystoneDetector = new SkystoneDetector(this);
-        while(!isStarted()){
-            skyStonePosition = skystoneDetector.getSkystonePos();
-            telemetry.addData("skyStonePosition: ", skyStonePosition);
-            telemetry.update();
-        }
+        time = new ElapsedTime();
+//        while(!isStarted()){
+//            skyStonePosition = skystoneDetector.getSkystonePos();
+//            telemetry.addData("skyStonePosition: ", skyStonePosition);
+//            telemetry.update();
+//        }
 
+        skyStonePosition = "left";
         waitForStart();
 
         if(skyStonePosition.equals("left")) {
+            drivetrain.moveEncoder(-.7, 15);
+            time.reset();
+
             //goes to skystone
             //grabs skystone
             //goes to foundation
