@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;//package org.firstinspires.ftc.teamcode.HydraSkyStone;
 
+import com.qualcomm.ftccommon.configuration.EditLegacyServoControllerActivity;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -16,21 +17,19 @@ public class Drivetrain{
     public DcMotor intakeLeft;
     public DcMotor intakeRight;
     public DcMotor lift;
-    public DcMotor arm;
     public Servo leftFoundation;
     public Servo rightFoundation;
-    public Servo grabber;
-    public Servo rotate;
     public Servo capStone;
-
-    ElapsedTime times;
+    Sensors sensor;
+    ElapsedTime time;
     LinearOpMode opMode;
 
     public Drivetrain(LinearOpMode opMode)throws InterruptedException {
         this.opMode = opMode;
         this.opMode.telemetry.addLine("Init: started");
         this.opMode.telemetry.update();
-
+        time = new ElapsedTime();
+        sensor = new Sensors(opMode);
         BR = this.opMode.hardwareMap.dcMotor.get("BR");
         BL = this.opMode.hardwareMap.dcMotor.get("BL");
         FR = this.opMode.hardwareMap.dcMotor.get("FR");
@@ -38,22 +37,17 @@ public class Drivetrain{
         intakeLeft = this.opMode.hardwareMap.dcMotor.get("intakeLeft");
         intakeRight = this.opMode.hardwareMap.dcMotor.get("intakeRight");
         lift = this.opMode.hardwareMap.dcMotor.get("lift");
-        arm = this.opMode.hardwareMap.dcMotor.get("arm");
 
         leftFoundation = this.opMode.hardwareMap.servo.get("leftFoundation");
         rightFoundation = this.opMode.hardwareMap.servo.get("rightFoundation");
-        grabber = this.opMode.hardwareMap.servo.get("grabber");
-        rotate = this.opMode.hardwareMap.servo.get("rotate");
         capStone = this.opMode.hardwareMap.servo.get("capStone");
 
         leftFoundation.setPosition(0.3);
         rightFoundation.setPosition(0.6);
-        grabber.setPosition(0.85);
-        rotate.setPosition(0.17);
         capStone.setPosition(0);
 
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
-        FL.setDirection(DcMotorSimple.Direction.REVERSE);
+        FR.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeRight.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -65,33 +59,32 @@ public class Drivetrain{
         intakeLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         intakeRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         this.opMode.telemetry.addLine("Init: FINISHED");
         this.opMode.telemetry.update();
     }
 
 
-    public void startMotors(double FLP, double FRP, double BLP, double BRP) {
-        BL.setPower(BLP);
-        BR.setPower(BRP);
+    public void startMotors(double FLP, double BLP, double FRP, double BRP) {
         FL.setPower(FLP);
+        BL.setPower(BLP);
         FR.setPower(FRP);
+        BR.setPower(BRP);
     }
 
     public void turnPI(double p, double i, double timeout) {
-        times.reset();
+        time.reset();
         double kP = p / 90;
         double kI = i / 100000;
-        double currentTime = times.milliseconds();
+        double currentTime = time.milliseconds();
         double pastTime = 0;
         double P = 0;
         double I = 0;
         double angleDiff = 0;// = sensor.getTrueDiff(angle);
         double changePID = 0;
-        while (Math.abs(angleDiff) > 1 && times.seconds() < timeout) {
+        while (Math.abs(angleDiff) > 1 && time.seconds() < timeout) {
             pastTime = currentTime;
-            currentTime = times.milliseconds();
+            currentTime = time.milliseconds();
             double dT = currentTime - pastTime;
             angleDiff = 0;//sensor.getTrueDiff(angle);
             P = angleDiff * kP;
@@ -112,16 +105,66 @@ public class Drivetrain{
         stopMotors();
     }
 
+    public void turnPID(double angle, double p, double i, double d, double timeout){
+        time.reset();
+        double kP = p;
+        double kD = d;
+        double kI = i;
+        double integral = 0;
+        double currentTime = time.milliseconds();
+        double pastTime = 0;
+        double prevError = sensor.getTrueDiff(angle);
+        double error = prevError;
+        double power = 0;
+        while ((Math.abs(error) > .5 && time.seconds() < timeout && !opMode.isStopRequested())) {
+            pastTime = currentTime;
+            currentTime = time.milliseconds();
+            double dT = currentTime - pastTime;
+            error = sensor.getTrueDiff(angle);
+            integral += dT * (error - prevError);
+            power = (error * kP) + integral * kI + ((error - prevError) / dT * kD);
+            if (power < 0) {
+                turn(power - .2);
+            } else {
+                turn(power + .2);
+            }
+            opMode.telemetry.addData("angle: ", sensor.getGyroYaw());
+            opMode.telemetry.addData("P", (error * kP));
+            opMode.telemetry.addData("I", (integral * kI));
+            opMode.telemetry.addData("D", ((Math.abs(error) - Math.abs(prevError)) / dT * kD));
+            opMode.telemetry.update();
+            prevError = error;
+        }
+        stopMotors();
+    }
+
+    public void turn(double power){
+        startMotors(power, power, -power, -power);
+    }
+
+
     public void stopMotors(){
         startMotors(0,0,0,0);
     }
 
     public void moveEncoder(double power, double inches) throws InterruptedException{
         resetEncoders();
-        while(getEncoderAvg() < inches * 43.5) {
+        while(getEncoderAvg() < inches * 35 && !opMode.isStopRequested()) {
             startMotors(power, power, power, power);
         }
         stopMotors();
+    }
+
+    public void strafeRightEncoder(double power, double inches) throws InterruptedException{
+        resetEncoders();
+        while(getEncoderAvg() < inches * 41 && !opMode.isStopRequested()) {
+            startMotors(power, -power, -power, power);
+        }
+        stopMotors();
+    }
+
+    public void strafeLeftEncoder(double power, double inches) throws InterruptedException{
+        strafeRightEncoder(-power, inches);
     }
 
     public void resetEncoders() throws InterruptedException {
@@ -165,6 +208,5 @@ public class Drivetrain{
                 + Math.abs(BR.getCurrentPosition())
                 + Math.abs(BL.getCurrentPosition())) / count;
     }
-
 
 }
