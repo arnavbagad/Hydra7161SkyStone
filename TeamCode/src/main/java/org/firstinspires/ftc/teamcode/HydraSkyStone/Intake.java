@@ -22,7 +22,6 @@ public class Intake{
         intakeLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         intakeRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        //intakeRight.setDirection(DcMotorSimple.Direction.REVERSE);
         time = new ElapsedTime();
         this.opMode.telemetry.addLine("Init: FINISHED");
         this.opMode.telemetry.update();
@@ -30,7 +29,7 @@ public class Intake{
 
 
     public void intakeIn(double power){
-        intakeLeft.setPower(power);
+        intakeLeft.setPower(-power);
         intakeRight.setPower(power);
     }
 

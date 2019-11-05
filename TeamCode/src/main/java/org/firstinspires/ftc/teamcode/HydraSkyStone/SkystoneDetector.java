@@ -55,27 +55,27 @@ public class SkystoneDetector extends LinearOpMode {
         return bm;
     }
 
-    public String getSkystonePos() throws InterruptedException {
+    public String getSkystoneBlue() throws InterruptedException {
         Bitmap rgbImage = getImage();
         // store the x values of pixels in relative thirds of the image
         ArrayList<Integer> left = new ArrayList<>();
         ArrayList<Integer> center = new ArrayList<>();
         ArrayList<Integer> right = new ArrayList<>();
         // (0,0) = top left
-        for (int y = 0; y < rgbImage.getHeight(); y++) {
+        for (int y = (int)(rgbImage.getHeight() * .18); y < rgbImage.getHeight(); y++) {
             for (int x = 0; x < rgbImage.getWidth(); x++) {
                 int pixel = rgbImage.getPixel(x, y);
                 // if sksytone color is detected in the pixel
                 // image is flipped, so first third is the right hand side
                 if (red(pixel) <= 69 && green(pixel) <= 69 && blue(pixel) <= 69) {
                     if (x < rgbImage.getWidth() / 3){
-                        right.add(x);
+                        left.add(x);
                     }
                     else if (x < rgbImage.getWidth() * 2 / 3){
                         center.add(x);
                     }
                     else {
-                        left.add(x);
+                        right.add(x);
                     }
                 }
             }
@@ -84,6 +84,50 @@ public class SkystoneDetector extends LinearOpMode {
         opMode.telemetry.addData("center: ", center.size());
         opMode.telemetry.addData("right: ", right.size());
         opMode.telemetry.update();
+
+        if (Math.max(left.size(), center.size()) > right.size()){
+            if (left.size() > center.size()){
+                return "left";
+            }
+            else {
+                return "center";
+            }
+        }
+        else {
+            return "right";
+        }
+    }
+
+    public String getSkystoneRed() throws InterruptedException {
+        Bitmap rgbImage = getImage();
+        // store the x values of pixels in relative thirds of the image
+        ArrayList<Integer> left = new ArrayList<>();
+        ArrayList<Integer> center = new ArrayList<>();
+        ArrayList<Integer> right = new ArrayList<>();
+        // (0,0) = top left
+        for (int y = (int) (rgbImage.getHeight() * .2); y < rgbImage.getHeight(); y++) {
+            for (int x = 0; x < (int)(rgbImage.getWidth() * .79); x++) {
+                int pixel = rgbImage.getPixel(x, y);
+                // if sksytone color is detected in the pixel
+                // image is flipped, so first third is the right hand side
+                if (red(pixel) <= 69 && green(pixel) <= 69 && blue(pixel) <= 69) {
+                    if (x < rgbImage.getWidth() * .21){
+                        left.add(x);
+                    }
+                    else if (x < rgbImage.getWidth() * .51){
+                        center.add(x);
+                    }
+                    else {
+                        right.add(x);
+                    }
+                }
+            }
+        }
+        opMode.telemetry.addData("left: ", left.size());
+        opMode.telemetry.addData("center: ", center.size());
+        opMode.telemetry.addData("right: ", right.size());
+        opMode.telemetry.update();
+        sleep(5000);
 
         if (Math.max(left.size(), center.size()) > right.size()){
             if (left.size() > center.size()){

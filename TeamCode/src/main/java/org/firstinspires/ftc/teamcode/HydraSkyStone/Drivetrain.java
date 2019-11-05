@@ -44,7 +44,7 @@ public class Drivetrain{
 
         leftFoundation.setPosition(0.3);
         rightFoundation.setPosition(0.6);
-        capStone.setPosition(0);
+        //capStone.setPosition(0);
 
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
         FR.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -70,6 +70,24 @@ public class Drivetrain{
         BL.setPower(BLP);
         FR.setPower(FRP);
         BR.setPower(BRP);
+    }
+
+    public void moveInches(double power, double inches, double heading) throws InterruptedException{
+        resetEncoders();
+        while(getEncoderAvg() < inches * 35 && !opMode.isStopRequested()) {
+            if (Math.abs(sensor.getGyroYaw() - heading) > 1){
+                if (sensor.getGyroYaw() > heading){
+                    startMotors(power, power, power * .8, power * .8);
+                }
+                else if (sensor.getGyroYaw() < heading) {
+                    startMotors(power * .8, power * .8, power, power);
+                }
+                else {
+                    startMotors(power, power, power, power);
+                }
+            }
+        }
+        stopMotors();
     }
 
     public void turnPI(double p, double i, double timeout) {
@@ -147,7 +165,7 @@ public class Drivetrain{
         startMotors(0,0,0,0);
     }
 
-    public void moveEncoder(double power, double inches) throws InterruptedException{
+    public void moveInches(double power, double inches) throws InterruptedException{
         resetEncoders();
         while(getEncoderAvg() < inches * 35 && !opMode.isStopRequested()) {
             startMotors(power, power, power, power);
@@ -207,6 +225,16 @@ public class Drivetrain{
         return (Math.abs(FR.getCurrentPosition()) +  Math.abs(FL.getCurrentPosition())
                 + Math.abs(BR.getCurrentPosition())
                 + Math.abs(BL.getCurrentPosition())) / count;
+    }
+
+    public void foundationGrab() {
+        leftFoundation.setPosition(0.88);
+        rightFoundation.setPosition(0.026);
+    }
+
+    public void foundationRelease() {
+        leftFoundation.setPosition(0.3);
+        rightFoundation.setPosition(0.6);
     }
 
 }

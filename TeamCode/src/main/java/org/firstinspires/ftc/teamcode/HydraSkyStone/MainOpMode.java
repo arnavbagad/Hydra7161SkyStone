@@ -52,12 +52,10 @@ public class MainOpMode extends OpMode {
         rightFoundation.setPosition(0.6);
         grabber.setPosition(0.85);
         rotate.setPosition(0.50);
-        capStone.setPosition(0);
+        //capStone.setPosition(0);
 
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
         FL.setDirection(DcMotorSimple.Direction.REVERSE);
-        intakeRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        intakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -90,34 +88,34 @@ public class MainOpMode extends OpMode {
     }
 
     public void runIntake(double left, double right) {
-        intakeLeft.setPower(-left);
-        intakeRight.setPower(right);
+        intakeLeft.setPower(left);
+        intakeRight.setPower(-right);
     }
 
     public void stopIntake() {
         runIntake(0, 0);
     }
 
-    public void grabberDown() {
+    public void foundationDown() {
         leftFoundation.setPosition(0.88);
         rightFoundation.setPosition(0.026);
     }
 
-    public void grabberUp() {
+    public void foundationUp() {
         leftFoundation.setPosition(0.3);
         rightFoundation.setPosition(0.6);
     }
 
-    public void armRotation() {
+    public void armReset() {
         rotate.setPosition(0.50);
     }
 
-    public void armReset() {
-        rotate.setPosition(0.16);
+    public void armRotation() {
+        rotate.setPosition(0.17);
     }
 
     public void armGrab() {
-        grabber.setPosition(0.8);
+        grabber.setPosition(0.875);
     }
 
     public void armRelease() {
@@ -125,13 +123,11 @@ public class MainOpMode extends OpMode {
     }
 
 
-    public void liftUp() {
-        lift.setPower(1);
+    public void lift(double power) {
+        lift.setPower(power);
     }
 
-    public void liftDown() {
-        lift.setPower(0);
-    }
+    public void stopLift() { lift.setPower(0); }
 
     public void capStoneDown() {
         capStone.setPosition(0.1);

@@ -23,8 +23,8 @@ public class Arm{
         grabber = this.opMode.hardwareMap.servo.get("grabber");
         rotate = this.opMode.hardwareMap.servo.get("rotate");
 
-        grabber.setPosition(0.85);
-        rotate.setPosition(0.17);
+        release();
+        //rotate();
 
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         time = new ElapsedTime();
@@ -49,6 +49,35 @@ public class Arm{
         stop();
     }
 
+    public void moveDegrees(double power, double degrees) throws InterruptedException{
+        resetEncoder();
+        while(getEncoder() < degrees * 30 && !opMode.isStopRequested()) {
+            setPower(power);
+        }
+        stop();
+    }
+
+    public void firstGrab(double power, double degrees, int degreesToRotate) throws InterruptedException{
+        resetEncoder();
+        while(getEncoder() < degrees * 30 && !opMode.isStopRequested()) {
+            if (getEncoder() > degreesToRotate * 30) {
+                 rotate();
+            }
+            setPower(power);
+        }
+        stop();
+    }
+
+    public void resetEncoder() throws InterruptedException {
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        opMode.idle();
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public int getEncoder() {
+        return Math.abs(arm.getCurrentPosition());
+    }
+
 //    public void frontToBack(double power, double seconds){
 //        times.reset();
 //        while (times.seconds() < seconds && !opMode.isStopRequested()){
@@ -64,12 +93,12 @@ public class Arm{
         rotate.setPosition(0.50);
     }
 
-    public void rotation() {
-        rotate.setPosition(0.16);
+    public void rotate() {
+        rotate.setPosition(0.17);
     }
 
     public void grab() {
-        grabber.setPosition(0.8);
+        grabber.setPosition(.8);
     }
 
     public void release() {

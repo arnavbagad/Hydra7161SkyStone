@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "BlueLoading", group = "LinearOpMode")
-public class BlueLoadingAuto extends LinearOpMode {
+@Autonomous(name = "RedLoading", group = "LinearOpMode")
+public class RedLoadingAuto extends LinearOpMode {
 
     Drivetrain drivetrain;
     Arm arm;
@@ -33,7 +33,7 @@ public class BlueLoadingAuto extends LinearOpMode {
         waitForStart();
 
         // move towards quarry
-        drivetrain.moveInches(-.4, 17.25);
+        drivetrain.moveInches(-.4, 18.5);
 
         // amount needed to strafe left to line up with center skystone
         final int CENTER_OFFSET = 4;
@@ -48,63 +48,50 @@ public class BlueLoadingAuto extends LinearOpMode {
         else {
             drivetrain.strafeLeftEncoder(.3, CENTER_OFFSET + 8);
         }
-        drivetrain.turnPID(0, 1.0/90, 0, .7, 3);
-
 
         // move arm to grab skystone
-        arm.reset();
-        arm.firstGrab(-.5, 160, 155);
-        sleep(2000);
-        arm.grab();
-        sleep(2000);
-        arm.moveDegrees(.5, 18);
+        arm.firstGrab(-.5, 215, 190);
         sleep(1000);
-        drivetrain.moveInches(.4, 12);
+        arm.moveDegrees(.5, 10);
 
-        // turn so back to face build zone, strafe to avoid hitting partners
-        drivetrain.turnPID(-90, .6 / 90, 0,.5, 5);
-        drivetrain.strafeLeftEncoder(.4, 12);
-
-        drivetrain.turnPID(-90, 1.0/90, 0, .7, 3);
-        arm.reset();
+        // turn so back faces build zone, strafe to avoid hitting partners
+        drivetrain.turnPID(90, .6 / 90, 0,.5, 5);
+        drivetrain.strafeLeftEncoder(.4, 4);
 
         // amount needed to drive to foundation if pos = center
-        int CENTER_DRIVE_DISTANCE = 110;
+        int CENTER_DRIVE_DISTANCE = 80;
 
         // move to foundation
         if (skyStonePosition.equals("left")){
-            drivetrain.moveInches(-.7, CENTER_DRIVE_DISTANCE + 8, -90);
+            drivetrain.moveInches(-.7, CENTER_DRIVE_DISTANCE + 8);
         }
         else if (skyStonePosition.equals("center")){
-            drivetrain.moveInches(-.7, CENTER_DRIVE_DISTANCE, -90);
+            drivetrain.moveInches(-.7, CENTER_DRIVE_DISTANCE);
         }
         else {
-            drivetrain.moveInches(-.7, CENTER_DRIVE_DISTANCE - 8, -90);
+            drivetrain.moveInches(-.7, CENTER_DRIVE_DISTANCE - 8);
         }
 
         // move arm up to avoid hitting foundation
-        arm.moveDegrees(.5, 25);
-        sleep(1000);
+        arm.moveDegrees(.5, 20);
 
-        // move and turn for foundation so back faces foundation
+        // turn so back faces foundation
         drivetrain.turnPID(0, .6 / 90, 0, .5, 5);
-        drivetrain.moveInches(-.3, 20);
 
         // grab foundation
         drivetrain.foundationGrab();
 
         // release skystone
         arm.moveDegrees(-.5, 20);
-        arm.moveDegrees(.5, 120);
         arm.release();
 
         // move towards construction site and release foundation
-        drivetrain.moveInches(.4, 40);
+        drivetrain.moveInches(.5, 45);
         drivetrain.foundationRelease();
-        arm.moveDegrees(0.5, 40);
+
         // park
-        drivetrain.strafeLeftEncoder(.7, 50);
+        drivetrain.strafeRightEncoder(.7, 50);
         drivetrain.moveInches(-.5, 20);
-        drivetrain.strafeLeftEncoder(.7, 10);
+        drivetrain.strafeRightEncoder(.7, 10);
     }
 }

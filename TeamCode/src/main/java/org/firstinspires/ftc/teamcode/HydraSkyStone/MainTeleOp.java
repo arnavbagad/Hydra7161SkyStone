@@ -40,22 +40,23 @@ public class MainTeleOp extends MainOpMode {
         }
 
         // intake out
-        if (gamepad1.right_bumper){
+        if (gamepad1.left_bumper && gamepad1.right_bumper){
             runIntake(-1, -1);
         }
-        else if (gamepad1.left_bumper) {
+        else if (gamepad1.right_bumper){
             runIntake(1, 1);
         }
-        else {
-            runIntake(0,0);
+        else if (gamepad1.left_bumper) {
+            runIntake(0, 0);
         }
 
-        if (gamepad2.left_trigger > 0.1) {
-            liftUp();
+        if (Math.abs(gamepad2.right_stick_y) > 0.1) {
+            lift(gamepad2.right_stick_y);
         }
-        if (gamepad2.right_trigger > 0.1) {
-            liftDown();
+        else {
+            stopLift();
         }
+
 
         // grabs foundation
         if (Math.abs(gamepad2.left_stick_y) > .1) {
@@ -65,32 +66,27 @@ public class MainTeleOp extends MainOpMode {
             arm.setPower(0);
         }
 
-        // lowers capstone dropper
-        if (gamepad2.right_bumper) {
-            capStoneDown();
-            //armRotation();
-        }
-        // lifts capstone dropper
-        if (gamepad2.left_bumper) {
-            capStoneUp();;
-            //armRelease();
-        }
-        // rotates arm/block
-        if (gamepad2.dpad_up) {
-            armRotation();
-        }
-        // resets arm pivot
-        if (gamepad2.dpad_down) {
-            armReset();
-        }
         // grabs block
-        if (gamepad2.dpad_left) {
+        if (gamepad2.right_bumper) {
+//            capStoneDown();
             armGrab();
         }
         // releases block
-        if (gamepad2.dpad_right) {
+        if (gamepad2.left_bumper) {
             armRelease();
+            //capStoneUp();
+            //armRelease();
         }
+        // rotates to original position grabber
+        if (gamepad2.dpad_up) {
+            armReset();
+        }
+        // rotates grabber
+        if (gamepad2.dpad_right) {
+            armRotation();
+        }
+        if (gamepad2.y) foundationDown();
+        if (gamepad2.a) foundationUp();
 
         //else if(gamepad1.left_bumper) {
             //grabberUp();
