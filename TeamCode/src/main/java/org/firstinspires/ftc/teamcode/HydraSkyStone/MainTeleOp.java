@@ -50,7 +50,7 @@ public class MainTeleOp extends MainOpMode {
             runIntake(0, 0);
         }
 
-        if (Math.abs(gamepad2.right_stick_y) > 0.1) {
+        if (Math.abs(gamepad2.right_stick_y) > 0.15) {
             lift(gamepad2.right_stick_y);
         }
         else {
@@ -75,7 +75,6 @@ public class MainTeleOp extends MainOpMode {
         if (gamepad2.left_bumper) {
             armRelease();
             //capStoneUp();
-            //armRelease();
         }
         // rotates to original position grabber
         if (gamepad2.dpad_up) {
@@ -87,6 +86,8 @@ public class MainTeleOp extends MainOpMode {
         }
         if (gamepad2.y) foundationDown();
         if (gamepad2.a) foundationUp();
+        if(gamepad2.x) capStoneDown();
+        if(gamepad2.b) capStoneUp();
 
         //else if(gamepad1.left_bumper) {
             //grabberUp();

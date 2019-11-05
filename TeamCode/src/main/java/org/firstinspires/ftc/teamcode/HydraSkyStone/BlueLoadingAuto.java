@@ -33,14 +33,18 @@ public class BlueLoadingAuto extends LinearOpMode {
         waitForStart();
 
         // move towards quarry
-        drivetrain.moveInches(-.4, 17.25);
-
+        if (skyStonePosition.equals("right"))
+            drivetrain.moveInches(-.4, 17.25);
+        if (skyStonePosition.equals("center"))
+            drivetrain.moveInches(-.4, 17.75);
+        else
+            drivetrain.moveInches(-.4, 18.0);
         // amount needed to strafe left to line up with center skystone
         final int CENTER_OFFSET = 4;
 
         // line up with correct skystone
         if (skyStonePosition.equals("left")){
-            drivetrain.strafeRightEncoder(.3, 8 - CENTER_OFFSET);
+            drivetrain.strafeRightEncoder(.3, 11 - CENTER_OFFSET);
         }
         else if (skyStonePosition.equals("center")){
             drivetrain.strafeLeftEncoder(.3, CENTER_OFFSET);
@@ -54,57 +58,59 @@ public class BlueLoadingAuto extends LinearOpMode {
         // move arm to grab skystone
         arm.reset();
         arm.firstGrab(-.5, 160, 155);
-        sleep(2000);
-        arm.grab();
-        sleep(2000);
-        arm.moveDegrees(.5, 18);
         sleep(1000);
+        arm.grab();
+        sleep(1000);
+        arm.moveDegrees(.5, 18);
         drivetrain.moveInches(.4, 12);
 
         // turn so back to face build zone, strafe to avoid hitting partners
-        drivetrain.turnPID(-90, .6 / 90, 0,.5, 5);
+        drivetrain.turnPID(-90, 1.0 / 90, 0,.5, 4);
         drivetrain.strafeLeftEncoder(.4, 12);
 
         drivetrain.turnPID(-90, 1.0/90, 0, .7, 3);
         arm.reset();
 
         // amount needed to drive to foundation if pos = center
-        int CENTER_DRIVE_DISTANCE = 110;
+        int CENTER_DRIVE_DISTANCE = 92;
 
         // move to foundation
         if (skyStonePosition.equals("left")){
-            drivetrain.moveInches(-.7, CENTER_DRIVE_DISTANCE + 8, -90);
+            drivetrain.moveInches(-1, CENTER_DRIVE_DISTANCE - 8, -90);
         }
         else if (skyStonePosition.equals("center")){
-            drivetrain.moveInches(-.7, CENTER_DRIVE_DISTANCE, -90);
+            drivetrain.moveInches(-1, CENTER_DRIVE_DISTANCE, -90);
         }
         else {
-            drivetrain.moveInches(-.7, CENTER_DRIVE_DISTANCE - 8, -90);
+            drivetrain.moveInches(-1, CENTER_DRIVE_DISTANCE + 8, -90);
         }
 
         // move arm up to avoid hitting foundation
         arm.moveDegrees(.5, 25);
-        sleep(1000);
 
         // move and turn for foundation so back faces foundation
         drivetrain.turnPID(0, .6 / 90, 0, .5, 5);
-        drivetrain.moveInches(-.3, 20);
+        drivetrain.moveInches(-.7, 20);
 
         // grab foundation
         drivetrain.foundationGrab();
 
         // release skystone
         arm.moveDegrees(-.5, 20);
-        arm.moveDegrees(.5, 120);
         arm.release();
+        arm.moveDegrees(.5, 120);
 
         // move towards construction site and release foundation
-        drivetrain.moveInches(.4, 40);
+        drivetrain.moveInches(.4, 35);
+        sleep(500);
+        drivetrain.moveInches(-.4, 2.5);
+        drivetrain.turnPID(-90, 1.6 / 90, 0, .5, 4.5);
         drivetrain.foundationRelease();
-        arm.moveDegrees(0.5, 40);
+        arm.moveDegrees(0.5, 20);
+
         // park
-        drivetrain.strafeLeftEncoder(.7, 50);
-        drivetrain.moveInches(-.5, 20);
-        drivetrain.strafeLeftEncoder(.7, 10);
+        drivetrain.strafeLeftEncoder(.6, 8.5);
+        drivetrain.moveInches(.7, 20);
+
     }
 }

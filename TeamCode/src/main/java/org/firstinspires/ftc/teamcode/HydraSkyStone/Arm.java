@@ -98,7 +98,7 @@ public class Arm{
     }
 
     public void grab() {
-        grabber.setPosition(.8);
+        grabber.setPosition(.78);
     }
 
     public void release() {
