@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.HydraSkyStone;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.MainOpMode;
+import org.firstinspires.ftc.teamcode.HydraSkyStone.MainOpMode;
 
 @TeleOp(name = "MainTeleOp", group = "opMode")
 public class MainTeleOp extends MainOpMode {
@@ -40,23 +40,22 @@ public class MainTeleOp extends MainOpMode {
         }
 
         // intake out
-        if (gamepad1.left_bumper && gamepad1.right_bumper){
+        if (gamepad1.right_bumper){
             runIntake(-1, -1);
         }
-        else if (gamepad1.right_bumper){
+        else if (gamepad1.left_bumper) {
             runIntake(1, 1);
         }
-        else if (gamepad1.left_bumper) {
-            runIntake(0, 0);
-        }
-
-        if (Math.abs(gamepad2.right_stick_y) > 0.15) {
-            lift(gamepad2.right_stick_y);
-        }
         else {
-            stopLift();
+            runIntake(0,0);
         }
 
+        if (gamepad2.left_trigger > 0.1) {
+            liftUp();
+        }
+        if (gamepad2.right_trigger > 0.1) {
+            liftDown();
+        }
 
         // grabs foundation
         if (Math.abs(gamepad2.left_stick_y) > .1) {
@@ -66,28 +65,32 @@ public class MainTeleOp extends MainOpMode {
             arm.setPower(0);
         }
 
-        // grabs block
+        // lowers capstone dropper
         if (gamepad2.right_bumper) {
-//            capStoneDown();
+            //capStoneDown();
+            armRotation();
+        }
+        // lifts capstone dropper
+        if (gamepad2.left_bumper) {
+           // capStoneUp();
+            armRelease();
+        }
+        // rotates arm/block
+        if (gamepad2.dpad_up) {
+            armRotation();
+        }
+        // resets arm pivot
+        if (gamepad2.dpad_down) {
+            armReset();
+        }
+        // grabs block
+        if (gamepad2.dpad_left) {
             armGrab();
         }
         // releases block
-        if (gamepad2.left_bumper) {
-            armRelease();
-            //capStoneUp();
-        }
-        // rotates to original position grabber
-        if (gamepad2.dpad_up) {
-            armReset();
-        }
-        // rotates grabber
         if (gamepad2.dpad_right) {
-            armRotation();
+            armRelease();
         }
-        if (gamepad2.y) foundationDown();
-        if (gamepad2.a) foundationUp();
-        if(gamepad2.x) capStoneDown();
-        if(gamepad2.b) capStoneUp();
 
         //else if(gamepad1.left_bumper) {
             //grabberUp();

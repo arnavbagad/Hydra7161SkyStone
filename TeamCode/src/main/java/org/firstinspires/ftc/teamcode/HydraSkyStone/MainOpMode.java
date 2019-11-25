@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.HydraSkyStone;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -26,7 +26,9 @@ public class MainOpMode extends OpMode {
     public double height;
     public Servo grabber;
     public Servo rotate;
-    public Servo capStone;
+    //public Servo CSS;
+
+    public double twobythree = 2/3;
 
     @Override
     public void init() {
@@ -46,16 +48,18 @@ public class MainOpMode extends OpMode {
         rightFoundation = hardwareMap.servo.get("rightFoundation");
         grabber = hardwareMap.servo.get("grabber");
         rotate = hardwareMap.servo.get("rotate");
-        capStone = hardwareMap.servo.get("capStone");
 
+        //CSS = hardwareMap.servo.get("CSS");
         leftFoundation.setPosition(0.3);
         rightFoundation.setPosition(0.6);
         grabber.setPosition(0.85);
-        rotate.setPosition(0.50);
-        //capStone.setPosition(0);
+        //rotate.setPosition(0.17);
+        //CSS.setPosition(0);
 
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
         FL.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -88,34 +92,42 @@ public class MainOpMode extends OpMode {
     }
 
     public void runIntake(double left, double right) {
-        intakeLeft.setPower(left);
-        intakeRight.setPower(-right);
+        intakeLeft.setPower(-left);
+        intakeRight.setPower(right);
     }
 
     public void stopIntake() {
         runIntake(0, 0);
     }
 
-    public void foundationDown() {
+    public void grabberDown() {
         leftFoundation.setPosition(0.88);
         rightFoundation.setPosition(0.026);
     }
 
-    public void foundationUp() {
+    public void grabberUp() {
         leftFoundation.setPosition(0.3);
         rightFoundation.setPosition(0.6);
     }
 
-    public void armReset() {
-        rotate.setPosition(0.50);
-    }
+    //public void capStoneDown(){
+    //CSS.setPosition(0.4);
+    // }
+
+    //public void capStoneUp(){
+    //CSS.setPosition(0);
+    //}
 
     public void armRotation() {
-        rotate.setPosition(0.17);
+        rotate.setPosition(0.5);
+    }
+
+    public void armReset() {
+        rotate.setPosition(0.1);
     }
 
     public void armGrab() {
-        grabber.setPosition(0.875);
+        grabber.setPosition(0.8);
     }
 
     public void armRelease() {
@@ -123,19 +135,18 @@ public class MainOpMode extends OpMode {
     }
 
 
-    public void lift(double power) {
-        lift.setPower(power);
+    public void liftUp() {
+        lift.setPower(1);
     }
 
-    public void stopLift() { lift.setPower(0); }
-
-    public void capStoneDown() {
-        capStone.setPosition(0.1);
+    public void liftDown() {
+        lift.setPower(0);
     }
 
-    public void capStoneUp(){
-        capStone.setPosition(0);
+    public void armMove(double power) {
+        arm.setPower(power);
     }
+
 //   public void armLift() {
 
 //   }
